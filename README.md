@@ -26,7 +26,7 @@ Ensure you have Docker/Podman/WSL installed on your system.
 4.  **Run the Docker Container:**
     Once the image is imported, you can run a container from it. This command will launch an interactive `zsh` session within the container, with the user set to `user` and the working directory set to `/home/user`. The container will be automatically removed upon exit (`--rm`).
     ```sh
-    docker run -e TERM -w /home/user --rm --user user -it env-amd64 zsh
+    docker run -e TERM -w /home/user --rm --user user --detach-keys="ctrl-q,ctrl-q" -it env-amd64 zsh
     ```
     **Explanation of flags:**
     -   `-e TERM`: Propagates your terminal's `TERM` environment variable into the container, improving compatibility with terminal applications.
@@ -36,4 +36,16 @@ Ensure you have Docker/Podman/WSL installed on your system.
     -   `-it`: Allocates a pseudo-TTY (`-t`) and keeps stdin open (`-i`) even if not attached, allowing for interactive use.
 
 5. Similarly, `podman import` commands are available for Podman, mirroring the functionality of Docker. On Windows, `wsl --import` provides a comparable feature, although with distinct syntax.
+
+6. If you want to start neovim directly when starting the docker, the following script does that while trying to keep pathsin sync between host and docker:
+```sh
+local expanded_path=
+if [[ -n $1 ]]; then
+    eval expanded_path="${1}"
+    if [[ $expanded_path == /* ]]; then
+        expanded_path="/home/user/root$expanded_path"
+    fi
+fi
+podman run --rm -e TERM -it --user user --detach-keys="ctrl-q,ctrl-q" --privileged -v /:/home/user/root -w /home/user/root`pwd` env-amd64:latest zsh -c "nvim $expanded_path ${@:2}"
+```
 
