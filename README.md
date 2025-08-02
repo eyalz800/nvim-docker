@@ -10,23 +10,16 @@ Ensure you have Docker/Podman/WSL installed on your system.
 1.  **Download the Environment Archive:**
     First, download the `env-amd64.tar.xz` (assuming amd64) archive from the releases page (e.g., GitHub releases). This file contains the pre-built Docker image.
 
-2.  **Decompress the Archive:**
-    Decompress the downloaded archive using `xz`:
+2.  **Import the Docker Image:**
+    Import the decompressed tar file into Docker to create the `env:latest` image:
     ```sh
-    xz -d env-amd64.tar.xz
-    ```
-    This will create an `env-amd64.tar` file in the same directory.
-
-3.  **Import the Docker Image:**
-    Import the decompressed tar file into Docker to create the `env-amd64` image:
-    ```sh
-    docker import env-amd64.tar env-amd64
+    xz -cd env-amd64.tar.xz | docker import - env:latest
     ```
 
-4.  **Run the Docker Container:**
+3.  **Run the Docker Container:**
     Once the image is imported, you can run a container from it. This command will launch an interactive `zsh` session within the container, with the user set to `user` and the working directory set to `/home/user`. The container will be automatically removed upon exit (`--rm`).
     ```sh
-    docker run -e TERM -w /home/user --rm --user user --detach-keys="ctrl-q,ctrl-q" -it env-amd64 zsh
+    docker run -e TERM -w /home/user --rm --user user --detach-keys="ctrl-q,ctrl-q" -it env:latest zsh
     ```
     **Explanation of flags:**
     -   `-e TERM`: Propagates your terminal's `TERM` environment variable into the container, improving compatibility with terminal applications.
@@ -35,9 +28,9 @@ Ensure you have Docker/Podman/WSL installed on your system.
     -   `--user user`: Runs the command inside the container as the `user` user.
     -   `-it`: Allocates a pseudo-TTY (`-t`) and keeps stdin open (`-i`) even if not attached, allowing for interactive use.
 
-5. Similarly, `podman import` commands are available for Podman, mirroring the functionality of Docker. On Windows, `wsl --import` provides a comparable feature, although with distinct syntax.
+4. Similarly, `podman import` commands are available for Podman, mirroring the functionality of Docker. On Windows, `wsl --import` provides a comparable feature, although with distinct syntax.
 
-6. If you want to start neovim directly when starting the docker, the following script does that while trying to keep pathsin sync between host and docker:
+5. If you want to start neovim directly when starting the docker, the following script does that while trying to keep pathsin sync between host and docker:
 ```sh
 local expanded_path=
 if [[ -n $1 ]]; then
@@ -46,6 +39,6 @@ if [[ -n $1 ]]; then
         expanded_path="/home/user/root$expanded_path"
     fi
 fi
-podman run --rm -e TERM -it --user user --detach-keys="ctrl-q,ctrl-q" --privileged -v /:/home/user/root -w /home/user/root`pwd` env-amd64:latest zsh -c "nvim $expanded_path ${@:2}"
+podman run --rm -e TERM -it --user user --detach-keys="ctrl-q,ctrl-q" --privileged -v /:/home/user/root -w /home/user/root`pwd` env:latest zsh -c "nvim $expanded_path ${@:2}"
 ```
 
