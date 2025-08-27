@@ -39,6 +39,6 @@ if [[ -n $1 ]]; then
         expanded_path="/home/user/root$expanded_path"
     fi
 fi
-podman run --rm -e TERM -it --user user --detach-keys="ctrl-q,ctrl-q" --privileged -v /:/home/user/root -w /home/user/root`pwd` env:latest zsh -c "nvim $expanded_path ${@:2}"
+docker run --rm -e TERM -it --user user --detach-keys="ctrl-q,ctrl-q" --privileged -v /:/home/user/root -w /home/user/root`pwd` env:latest zsh -c "nvim $expanded_path ${@:2}"
 ```
 
