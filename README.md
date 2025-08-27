@@ -30,7 +30,7 @@ Ensure you have Docker/Podman/WSL installed on your system.
 
 4. Similarly, `podman import` commands are available for Podman, mirroring the functionality of Docker. On Windows, `wsl --import` provides a comparable feature, although with distinct syntax.
 
-5. If you want to start neovim directly when starting the docker, the following script does that while trying to keep pathsin sync between host and docker:
+5. If you want to start neovim directly when starting the docker, the following script does that while trying to keep paths in sync between host and docker:
 ```sh
 local expanded_path=
 if [[ -n $1 ]]; then
